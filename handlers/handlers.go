@@ -1,56 +1,52 @@
 package handlers
 
 import (
+	"main/data"
 	"net/http"
 	"strconv"
-    "main/data"
+	"text/template"
 )
 
 var books = []data.Book{
-    {1, "The Go Programming Language", "Alan Donovan", 2015},
-    {2, "Clean Code", "Robert C. Martin", 2008},
-    {3, "The Pragmatic Programmer", "Andrew Hunt", 1999},
+	{1, "The Go Programming Language", "Alan Donovan", 2015},
+	{2, "Clean Code", "Robert C. Martin", 2008},
+	{3, "The Pragmatic Programmer", "Andrew Hunt", 1999},
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-    tmpl := template.Must(template.ParseFiles("templates/home.html"))
-    tmpl.Execute(w, books)
+	tmpl := template.Must(template.ParseFiles("templates/home.html"))
+	tmpl.Execute(w, books)
+}
 func ContactHandler(w http.ResponseWriter, r *http.Request) {
-    tmpl := template.Must(template.ParseFiles("templates/contact.html"))
-    tmpl.Execute(w, nil)
+	tmpl := template.Must(template.ParseFiles("templates/contact.html"))
+	tmpl.Execute(w, nil)
 }
 func BookHandler(w http.ResponseWriter, r *http.Request) {
-    idStr := r.URL.Query().Get("id")
+	idStr := r.URL.Query().Get("id")
 
-    if idStr == "" {
-        http.Error(w, "ID requis", http.StatusBadRequest)
-        return
-    }
+	if idStr == "" {
+		http.Error(w, "ID requis", http.StatusBadRequest)
+		return
+	}
 
-    id, err := strconv.Atoi(idStr)
-    if err != nil {
-        http.Error(w, "ID invalide", http.StatusBadRequest)
-        return
-    }
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "ID invalide", http.StatusBadRequest)
+		return
+	}
 
-    var selected *data.Book
-    for _, b := range books {
-        if b.ID == id {
-            selected = &b
-        }
-    }
+	var selected *data.Book
+	for _, b := range books {
+		if b.ID == id {
+			selected = &b
+		}
+	}
 
-    if selected == nil {
-        http.Error(w, "Livre introuvable", http.StatusNotFound)
-        return
-    }
+	if selected == nil {
+		http.Error(w, "Livre introuvable", http.StatusNotFound)
+		return
+	}
 
-    tmpl := template.Must(template.ParseFiles("templates/book.html"))
-    tmpl.Execute(w, selected)
-}
-    return
-}
-
-func ContactHandler(w http.ResponseWriter, r *http.Request) {
-    return
+	tmpl := template.Must(template.ParseFiles("templates/book.html"))
+	tmpl.Execute(w, selected)
 }
